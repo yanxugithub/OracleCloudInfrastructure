@@ -1,0 +1,99 @@
+1. Create the auth token as the password for docker login
+    In the Console's top navigation bar, click the Profile menu (your avatar).
+    Click your username.
+    Click Auth Tokens.
+    Click Generate Token.
+    Give it a description.
+    Click Generate Token.
+    Copy the token and save it.
+    Click Close. 
+
+2. Create the container registry
+Create a Docker Repository
+
+    Open the navigation menu and click Developer Services. Under Containers & Artifacts, click Container Registry.
+    In the left navigation, select <your-compartment-name>.
+    Click Create Repository.
+    Create a private repository with your choice of repo name:
+
+<repo-name> = <image-path-name>/<image-name>
+
+Example: helidon-apps/helidon-quickstart-mp
+You are now ready to push your local image to Container Registry.
+Note
+
+Before you can push a Docker image into a registry repository, the repository must exist in your compartment. If the repository does not exist, the Docker push command does not work correctly.
+Note
+
+The slash in a repository name does not represent a hierarchical directory structure. The optional <image-path-name> helps to organize your repositories.
+
+
+
+Push Your Local Image
+
+With your local Docker image created, push the image to the Container Registry.
+
+
+docker login <region-key>.ocir.io
+
+<region-key> is from here https://docs.oracle.com/en-us/iaas/Content/Registry/Concepts/registryprerequisites.htm#regional-availability
+
+search your region name to find the region key.
+
+For example, ashburn -> iad.ocir.io
+
+
+You are prompted for your login name and password.
+
+    Username: <tenancy-namespace>/<user-name>
+    Password: <auth-token>
+
+<auth-token> is the token created from the beginning.
+
+List your local Docker images:
+
+docker images
+
+The Docker images on your system are displayed. Identify the image you created in the last section: helidon-quickstart-mp
+Tag your local image with the URL for the registry plus the repo name, so you can push it to that repo.
+
+docker tag <your-local-image> <repo-url>/<repo-name>
+
+    Replace <repo-url> with:
+
+    <region-key>.ocir.io/<tenancy-namespace>/
+
+    Replace <repo-name> with:
+
+    <image-folder-name>/<image-name> from the Create a Docker Repository section.
+    Here is an example after combining both:
+
+    docker tag helidon-quickstart-mp iad.ocir.io/my-namespace/helidon-apps/helidon-quickstart-mp
+
+    In this example, the components are:
+        Repo URL: iad.ocir.io/my-namespace/
+        Repo name: helidon-apps/helidon-quickstart-mp
+
+Note
+
+OCI Container Registry now supports creating a registry repo in any compartment rather than only in the root compartment (tenancy). To push the image to the repo you created, combine the registry URL with the exact repo name. OCI Container Registry matches the unique repo name and pushes your image.
+Check your Docker images to see if the image is copied.
+
+docker images
+
+    The tagged image has the same image ID as your local image.
+    The tagged image name is:
+
+    <region-key>.ocir.io/<tenancy-namespace>/<image-path-name>/<image-name>
+
+Push the image to Container Registry.
+
+    docker push <copied-image-name>:latest
+
+    Example:
+
+    docker push iad.ocir.io/my-namespace/helidon-apps/helidon-quickstart-mp:latest
+
+    Open the navigation menu and click Developer Services. Under Containers & Artifacts, click Container Registry. 
+
+Find your image in Container Registry after the push command is complete.
